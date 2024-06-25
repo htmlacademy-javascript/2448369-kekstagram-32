@@ -1,10 +1,8 @@
 function checkStringLength (string, maxLength) {
-  // if (string.length <= maxLength) {
-  //   return true;
-  // }
-  // return false;
   return string.length <= maxLength;
 }
+
+checkStringLength ('train to write functions', 30);
 
 // console.log(checkStringLength('train to write functions', 30));
 // console.log(checkStringLength('train to write functions', 5));
@@ -27,12 +25,15 @@ function isPalindrome (str) {
   return true; // Если все символы совпали, палиндром
 }
 
+isPalindrome ('Anna');
+
 // console.log(isPalindrome('Anna'));
 // console.log(isPalindrome('Baidikova'));
 // console.log(isPalindrome('Лёша на полке клопа нашёл '));
 
+
 function returnNumbers (input) {
-  let string = input.toString();
+  const string = input.toString();
   let result = '';
 
   for (let i = 0; i < string.length; i++) {
@@ -40,7 +41,7 @@ function returnNumbers (input) {
       result += string[i];
     }
   }
-  let number = parseInt(result, 10);
+  const number = parseInt(result, 10);
 
   if (Number.isNaN(number)) {
     return NaN;
@@ -49,6 +50,8 @@ function returnNumbers (input) {
   return number;
 
 }
+
+returnNumbers('i am 77 y.o.');
 
 // console.log(returnNumbers('2023 год'));
 // console.log(returnNumbers('1 кефир, 0.5 батона'));
