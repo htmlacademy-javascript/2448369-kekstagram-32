@@ -114,26 +114,14 @@ const captions = [
 ];
 
 const generatePhotoID = createRandomIdFromRangeGenerator(1, 25);
-function getCaption() {
-  const captionIndex = getRandomInteger(0, captions.length - 1);
-  return captions[captionIndex];
-}
-
 
 const photoDescription = () => {
   const id = generatePhotoID();
-  const numberOfPhotoComments = getRandomInteger(0,30);
-  const photoComments = [];
-
-  for (let i = 0; i < numberOfPhotoComments; i++) {
-    const randomIndex = getRandomInteger(0, COMMENTS.length - 1);
-    photoComments.push(COMMENTS[randomIndex]);
-  }
-
+  const photoComments = Array.from({ length: getRandomInteger(0, 30) }, () => COMMENTS[getRandomInteger(0, COMMENTS.length - 1)]);
   return {
-    id: id,
+    id,
     url: `photos/${id}.svg`,
-    description: getCaption(),
+    description: captions[getRandomInteger(0, captions.length - 1)],
     likes: getRandomInteger(15, 200),
     comments: photoComments
   };
