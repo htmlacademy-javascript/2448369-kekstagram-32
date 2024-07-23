@@ -13,10 +13,10 @@ const checkMeetingDuration = (workdayStart, workdayEnd, meetingStart, meetingDur
   const meetingEndMinutes = meetingStartMinutes + meetingDuration;
 
   if (meetingStartMinutes >= workdayStartMinutes && meetingEndMinutes <= workdayEndMinutes) {
-    console.log('Время встречи забронировано');
+    // console.log('Время встречи забронировано');
     return true;
   }
-  console.log('Выберите другое время встречи');
+  // console.log('Выберите другое время встречи');
   return false;
 };
 
