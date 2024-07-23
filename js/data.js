@@ -104,6 +104,6 @@ const photoDescription = () => {
 
 // console.log(photoDescription);
 
-const photoDescriptions = Array.from({ length: PHOTO_COUNT }, photoDescription);
-export { photoDescriptions };
+const getPhoto = Array.from({ length: PHOTO_COUNT }, photoDescription);
+export { getPhoto };
 
