@@ -1,5 +1,5 @@
 import { getPhoto } from './data.js';
-console.log(getPhoto);
+// console.log(getPhoto);
+import { renderGallery } from './gallery.js';
 
-import { thumbnailGenerator } from './thumbnailGenerator.js';
-thumbnailGenerator(getPhoto);
+renderGallery(getPhoto);
