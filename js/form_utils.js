@@ -1,3 +1,6 @@
+import { resetScale } from './scale';
+import { setEffect, resetSlider } from './effects';
+
 const uploadImg = document.querySelector('.img-upload__input');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
 const bodyElement = document.body;
@@ -16,6 +19,7 @@ function openUploadInput() {
   bodyElement.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
   updatePublishButton(); // Обновляем состояние кнопки при открытии модального окна
+  setEffect();
 }
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
@@ -25,6 +29,8 @@ const closeUploadInput = () => {
   bodyElement.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
   resetForm();
+  resetScale();
+  resetSlider();
 };
 
 function onDocumentKeydown(evt) {
@@ -58,10 +64,7 @@ function validateComment(value) {
   return value.length <= 140;
 }
 
-pristine.addValidator(
-  commentField,
-  validateComment
-);
+pristine.addValidator(commentField, validateComment);
 
 // -> Валидация хэштегов
 
@@ -121,11 +124,7 @@ function getHashtagErrorMessage(value) {
   // return 'Некорректный хэштег';
 }
 
-pristine.addValidator(
-  hashtagField,
-  validateHashtags,
-  getHashtagErrorMessage
-);
+pristine.addValidator(hashtagField, validateHashtags, getHashtagErrorMessage);
 
 form.addEventListener('submit', (evt) => {
   evt.preventDefault();
