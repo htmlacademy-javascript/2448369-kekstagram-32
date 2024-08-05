@@ -5,12 +5,18 @@ const uploadImgCancel = uploadOverlay.querySelector('.img-upload__cancel');
 const form = document.querySelector('.img-upload__form');
 const hashtagField = form.querySelector('.text__hashtags');
 const commentField = form.querySelector('.text__description');
+const publishButton = form.querySelector('.img-upload__submit');
 
 uploadImg.addEventListener('change', () => {
+  openUploadInput();
+});
+
+function openUploadInput() {
   uploadOverlay.classList.remove('hidden');
   bodyElement.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
-});
+  updatePublishButton(); // Обновляем состояние кнопки при открытии модального окна
+}
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
@@ -23,15 +29,123 @@ const closeUploadInput = () => {
 
 function onDocumentKeydown(evt) {
   if (isEscapeKey(evt)) {
+    if (document.activeElement === hashtagField || document.activeElement === commentField) {
+      evt.stopPropagation(); // Предотвращает выполнение обработчиков событий
+      return;
+    }
     evt.preventDefault();
     closeUploadInput();
   }
 }
 
-function resetForm () {
+function resetForm() {
   uploadImg.value = ''; // Сбрасываем значение поля выбора файла
-  document.querySelector('#upload-select-image').reset(); // Сбрасываем все значения полей формы
+  form.reset(); // Сбрасываем все значения полей формы
+  updatePublishButton(); // Обновляем состояние кнопки после сброса формы
 }
 
 uploadImgCancel.addEventListener('click', closeUploadInput);
 
+// -> Валидация комментов
+
+const pristine = new Pristine(form, {
+  classTo: 'img-upload__field-wrapper',
+  errorTextParent: 'img-upload__field-wrapper',
+  errorTextClass: 'img-upload__field-wrapper__error',
+});
+
+function validateComment(value) {
+  return value.length <= 140;
+}
+
+pristine.addValidator(
+  commentField,
+  validateComment
+);
+
+// -> Валидация хэштегов
+
+function validateHashtags(value) {
+  if (!value) {
+    return true; // Хэштеги необязательны
+  }
+
+  const hashtags = value.trim().split(/\s+/); //.split(/\s+/):Разделяет строку на массив
+
+  if (hashtags.length > 5) {
+    return false; // нельзя указать больше пяти хэштегов
+  }
+
+  const hashtagPattern = /^#[a-za-яё0-9]{1,19}$/i;
+  const uniqueHashtags = new Set();
+
+  for (const hashtag of hashtags) {
+    if (hashtag.length > 20) {
+      return false; // Максимум 20 символов
+    }
+    if (!hashtagPattern.test(hashtag)) {
+      return false; // Хэштег должен начинаться с # и содержать только буквы и цифры
+    }
+    if (uniqueHashtags.has(hashtag.toLowerCase())) {
+      return false; // Один и тот же хэштег не может быть использован дважды
+    }
+    uniqueHashtags.add(hashtag.toLowerCase());
+  }
+
+  return true;
+}
+
+function getHashtagErrorMessage(value) {
+  const hashtags = value.trim().split(/\s+/);
+
+  if (hashtags.length > 5) {
+    return 'Нельзя указать больше пяти хэштегов';
+  }
+
+  const hashtagPattern = /^#[a-za-яё0-9]{1,19}$/i;
+  const uniqueHashtags = new Set();
+
+  for (const hashtag of hashtags) {
+    if (hashtag.length > 20) {
+      return 'Максимум 20 символов';
+    }
+    if (!hashtagPattern.test(hashtag)) {
+      return 'Хэштег должен начинаться с # и содержать только буквы и цифры';
+    }
+    if (uniqueHashtags.has(hashtag.toLowerCase())) {
+      return 'Один и тот же хэштег не может быть использован дважды';
+    }
+    uniqueHashtags.add(hashtag.toLowerCase());
+  }
+
+  // return 'Некорректный хэштег';
+}
+
+pristine.addValidator(
+  hashtagField,
+  validateHashtags,
+  getHashtagErrorMessage
+);
+
+form.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  const isValid = pristine.validate();
+  if (isValid) {
+    form.submit(); // Отправка формы
+  } else {
+    updatePublishButton();
+  }
+});
+
+// Реализуйте логику проверки так, чтобы, как минимум, она срабатывала при попытке отправить форму и не давала этого сделать, если форма заполнена не по правилам.
+function updatePublishButton() {
+  const isValid = pristine.validate();
+  if (isValid) {
+    publishButton.removeAttribute('disabled');
+  } else {
+    publishButton.setAttribute('disabled', true);
+  }
+}
+
+hashtagField.addEventListener('input', updatePublishButton);
+commentField.addEventListener('input', updatePublishButton);
