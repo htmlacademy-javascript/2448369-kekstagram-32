@@ -1,6 +1,5 @@
 import { resetScale } from './scale';
 import { setEffect, resetSlider } from './effects';
-import { showAlert } from './util';
 import { sendData } from './api.js';
 
 const publishButtonText = {
