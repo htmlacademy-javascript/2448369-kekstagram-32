@@ -25,3 +25,4 @@ const renderThumbnails = (pictures, container) => {
 };
 
 export {renderThumbnails};
+
