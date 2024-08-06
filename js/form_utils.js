@@ -1,6 +1,12 @@
 import { resetScale } from './scale';
 import { setEffect, resetSlider } from './effects';
+import { showAlert } from './util';
+import { sendData } from './api.js';
 
+const publishButtonText = {
+  IDLE: 'Опубликовать',
+  SENDING: 'Публикую...'
+};
 const uploadImg = document.querySelector('.img-upload__input');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
 const bodyElement = document.body;
@@ -126,16 +132,99 @@ function getHashtagErrorMessage(value) {
 
 pristine.addValidator(hashtagField, validateHashtags, getHashtagErrorMessage);
 
-form.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  const isValid = pristine.validate();
-  if (isValid) {
-    form.submit(); // Отправка формы
-  } else {
-    updatePublishButton();
-  }
-});
+const blockPublishButton = () => {
+  publishButton.disabled = true;
+  publishButton.textContent = publishButtonText.SENDING;
+};
 
+const unblockPublishButton = () => {
+  publishButton.disabled = false;
+  publishButton.textContent = publishButtonText.IDLE;
+};
+
+const showSuccessMessage = () => {
+  const template = document.querySelector('#success').content;
+  const messageElement = template.cloneNode(true);
+  document.body.append(messageElement);
+
+  const successButton = document.querySelector('.success__button');
+  const successElement = document.querySelector('.success');
+
+  const removeMessage = () => {
+    successElement.remove();
+    document.removeEventListener('keydown', onEscKeyDown);
+    document.removeEventListener('click', onOutsideClick);
+  };
+
+  function onEscKeyDown (evt) {
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      removeMessage();
+    }
+  }
+
+  function onOutsideClick (evt) {
+    if (!evt.target.closest('.success__inner')) {
+      removeMessage();
+    }
+  }
+
+  successButton.addEventListener('click', removeMessage);
+  document.addEventListener('keydown', onEscKeyDown);
+  document.addEventListener('click', onOutsideClick);
+};
+
+const showErrorMessage = () => {
+  const template = document.querySelector('#error').content;
+  const messageElement = template.cloneNode(true);
+  document.body.append(messageElement);
+
+  const errorButton = document.querySelector('.error__button');
+  const errorElement = document.querySelector('.error');
+
+  const removeMessage = () => {
+    errorElement.remove();
+    document.removeEventListener('keydown', onEscKeyDown);
+    document.removeEventListener('click', onOutsideClick);
+  };
+
+  function onEscKeyDown (evt) {
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      removeMessage();
+    }
+  }
+
+  function onOutsideClick (evt) {
+    if (!evt.target.closest('.error__inner')) {
+      removeMessage();
+    }
+  }
+
+  errorButton.addEventListener('click', removeMessage);
+  document.addEventListener('keydown', onEscKeyDown);
+  document.addEventListener('click', onOutsideClick);
+};
+
+
+const setFormSubmit = (onSuccess) => {
+  form.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const isValid = pristine.validate();
+    if (isValid) {
+      blockPublishButton();
+      sendData(new FormData(evt.target))
+        .then(() => {
+          onSuccess();
+          showSuccessMessage();
+        })
+        .catch(() => {
+          showErrorMessage();
+        })
+        .finally(unblockPublishButton);
+    }
+  });
+};
 // Реализуйте логику проверки так, чтобы, как минимум, она срабатывала при попытке отправить форму и не давала этого сделать, если форма заполнена не по правилам.
 function updatePublishButton() {
   const isValid = pristine.validate();
@@ -148,3 +237,5 @@ function updatePublishButton() {
 
 hashtagField.addEventListener('input', updatePublishButton);
 commentField.addEventListener('input', updatePublishButton);
+
+export { setFormSubmit, openUploadInput, closeUploadInput };

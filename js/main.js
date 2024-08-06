@@ -1,7 +1,17 @@
-import { getPhoto } from './data.js';
-// console.log(getPhoto);
+// main.js
 import { renderGallery } from './gallery.js';
 import './form_utils.js';
 import './scale.js';
+import { setFormSubmit, openUploadInput, closeUploadInput } from './form_utils.js';
+import { getData } from './api.js';
+import { showAlert, showDataError } from './util.js';
 
-renderGallery(getPhoto);
+getData()
+  .then((pictures) => {
+    renderGallery(pictures);
+  })
+  .catch(() => {
+    showDataError();
+  });
+
+setFormSubmit(closeUploadInput);
