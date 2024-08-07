@@ -2,11 +2,13 @@ import { resetScale } from './scale';
 import { setEffect, resetSlider } from './effects';
 import { sendData } from './api.js';
 
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const publishButtonText = {
   IDLE: 'Опубликовать',
   SENDING: 'Публикую...'
 };
-const uploadImg = document.querySelector('.img-upload__input');
+const uploadImg = document.querySelector('.img-upload__input[type=file]');
+const preview = document.querySelector('.img-upload__preview img');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
 const bodyElement = document.body;
 const uploadImgCancel = uploadOverlay.querySelector('.img-upload__cancel');
@@ -17,6 +19,12 @@ const publishButton = form.querySelector('.img-upload__submit');
 
 uploadImg.addEventListener('change', () => {
   openUploadInput();
+  const file = uploadImg.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+  if (matches) {
+    preview.src = URL.createObjectURL(file);
+  }
 });
 
 function openUploadInput() {
@@ -50,9 +58,10 @@ function onDocumentKeydown(evt) {
 }
 
 function resetForm() {
-  uploadImg.value = ''; // Сбрасываем значение поля выбора файла
-  form.reset(); // Сбрасываем все значения полей формы
-  updatePublishButton(); // Обновляем состояние кнопки после сброса формы
+  uploadImg.value = '';
+  form.reset();
+  preview.src = '';
+  updatePublishButton();
 }
 
 uploadImgCancel.addEventListener('click', closeUploadInput);
