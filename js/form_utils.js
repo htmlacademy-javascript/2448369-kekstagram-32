@@ -207,12 +207,12 @@ const showErrorMessage = () => {
 
 
 const setFormSubmit = (onSuccess) => {
-  form.addEventListener('submit', (evt) => {
+  form.addEventListener('submit', async (evt) => { // async & await добавила после лайва
     evt.preventDefault();
     const isValid = pristine.validate();
     if (isValid) {
       blockPublishButton();
-      sendData(new FormData(evt.target))
+      await sendData(new FormData(evt.target))
         .then(() => {
           onSuccess();
           showSuccessMessage();
