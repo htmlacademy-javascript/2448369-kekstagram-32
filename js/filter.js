@@ -4,6 +4,7 @@ import { debounce } from './util';
 
 const RANDOM_PHOTOS_COUNT = 10;
 
+
 let currentPictures = [];
 
 const filterDefault = () => {
@@ -28,6 +29,12 @@ const filterDiscussed = () => {
   renderThumbnails(discussedPictures, document.querySelector('.pictures'));
 };
 
+const filterFunctions = {
+  'filter-default': filterDefault,
+  'filter-random': filterRandom,
+  'filter-discussed': filterDiscussed
+};
+
 const onFilterChange = (evt) => {
   if (evt.target.classList.contains('img-filters__button')) {
     document.querySelector('.img-filters__button--active').classList.remove('img-filters__button--active');
@@ -35,16 +42,9 @@ const onFilterChange = (evt) => {
 
     removeThumbnails();
 
-    switch (evt.target.id) {
-      case 'filter-default':
-        filterDefault();
-        break;
-      case 'filter-random':
-        filterRandom();
-        break;
-      case 'filter-discussed':
-        filterDiscussed();
-        break;
+    const filterFunction = filterFunctions[evt.target.id];
+    if (filterFunction) {
+      filterFunction();
     }
   }
 };
