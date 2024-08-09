@@ -6,8 +6,8 @@ const cancelButtonElement = bigPictureElement.querySelector('.big-picture__cance
 const bodyElement = document.querySelector('body');
 const commentTemplateElement = document.querySelector('#comment').content.querySelector('.social__comment');
 const COMMENTS_PER_PAGE = 5;
-let commentsShown = 0; //количество уже показанных комментариев.
-let currentComments = []; //текущий список комментариев изображения.
+let commentsShown = 0;
+let currentComments = [];
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
@@ -64,9 +64,8 @@ const showBigPicture = (data) => {
 };
 
 function loadMoreComments () {
-  const fragment = document.createDocumentFragment(); //создаем фрагмент для комментариев
-  const commentsToShow = currentComments.slice(commentsShown, commentsShown + COMMENTS_PER_PAGE); //Начальный индекс (commentsShown): Указывает на индекс первого//Конечный индекс (commentsShown + COMMENTS_PER_PAGE): Указывает на индекс, до которого нужно выбрать комментарии.
-
+  const fragment = document.createDocumentFragment();
+  const commentsToShow = currentComments.slice(commentsShown, commentsShown + COMMENTS_PER_PAGE);
   commentsToShow.forEach((item) => {
     const comment = createComment(item);
     fragment.append(comment);

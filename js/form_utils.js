@@ -2,11 +2,14 @@ import { resetScale } from './scale';
 import { setEffect, resetSlider } from './effects';
 import { sendData } from './api.js';
 
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const publishButtonText = {
   IDLE: 'Опубликовать',
   SENDING: 'Публикую...'
 };
-const uploadImg = document.querySelector('.img-upload__input');
+
+const uploadImg = document.querySelector('.img-upload__input[type=file]');
+const preview = document.querySelector('.img-upload__preview img');
 const uploadOverlay = document.querySelector('.img-upload__overlay');
 const bodyElement = document.body;
 const uploadImgCancel = uploadOverlay.querySelector('.img-upload__cancel');
@@ -17,31 +20,37 @@ const publishButton = form.querySelector('.img-upload__submit');
 
 uploadImg.addEventListener('change', () => {
   openUploadInput();
+  const file = uploadImg.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+  if (matches) {
+    preview.src = URL.createObjectURL(file);
+  }
 });
 
 function openUploadInput() {
   uploadOverlay.classList.remove('hidden');
   bodyElement.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
-  updatePublishButton(); // Обновляем состояние кнопки при открытии модального окна
+  updatePublishButton();
   setEffect();
 }
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-const closeUploadInput = () => {
+function closeUploadInput() {
   uploadOverlay.classList.add('hidden');
   bodyElement.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
   resetForm();
   resetScale();
   resetSlider();
-};
+}
 
 function onDocumentKeydown(evt) {
   if (isEscapeKey(evt)) {
     if (document.activeElement === hashtagField || document.activeElement === commentField) {
-      evt.stopPropagation(); // Предотвращает выполнение обработчиков событий
+      evt.stopPropagation();
       return;
     }
     evt.preventDefault();
@@ -50,14 +59,15 @@ function onDocumentKeydown(evt) {
 }
 
 function resetForm() {
-  uploadImg.value = ''; // Сбрасываем значение поля выбора файла
-  form.reset(); // Сбрасываем все значения полей формы
-  updatePublishButton(); // Обновляем состояние кнопки после сброса формы
+  uploadImg.value = '';
+  form.reset();
+  preview.src = '';
+  updatePublishButton();
+  clearErrors();
 }
 
 uploadImgCancel.addEventListener('click', closeUploadInput);
 
-// -> Валидация комментов
 
 const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
@@ -65,23 +75,27 @@ const pristine = new Pristine(form, {
   errorTextClass: 'img-upload__field-wrapper__error',
 });
 
+function clearErrors() {
+  pristine.reset();
+  const errorElements = document.querySelectorAll('.pristine-error');
+  errorElements.forEach((element) => element.remove());
+}
+
 function validateComment(value) {
   return value.length <= 140;
 }
 
 pristine.addValidator(commentField, validateComment);
 
-// -> Валидация хэштегов
-
 function validateHashtags(value) {
   if (!value) {
-    return true; // Хэштеги необязательны
+    return true;
   }
 
-  const hashtags = value.trim().split(/\s+/); //.split(/\s+/):Разделяет строку на массив
+  const hashtags = value.trim().split(/\s+/);
 
   if (hashtags.length > 5) {
-    return false; // нельзя указать больше пяти хэштегов
+    return false;
   }
 
   const hashtagPattern = /^#[a-za-яё0-9]{1,19}$/i;
@@ -89,13 +103,13 @@ function validateHashtags(value) {
 
   for (const hashtag of hashtags) {
     if (hashtag.length > 20) {
-      return false; // Максимум 20 символов
+      return false;
     }
     if (!hashtagPattern.test(hashtag)) {
-      return false; // Хэштег должен начинаться с # и содержать только буквы и цифры
+      return false;
     }
     if (uniqueHashtags.has(hashtag.toLowerCase())) {
-      return false; // Один и тот же хэштег не может быть использован дважды
+      return false;
     }
     uniqueHashtags.add(hashtag.toLowerCase());
   }
@@ -125,8 +139,6 @@ function getHashtagErrorMessage(value) {
     }
     uniqueHashtags.add(hashtag.toLowerCase());
   }
-
-  // return 'Некорректный хэштег';
 }
 
 pristine.addValidator(hashtagField, validateHashtags, getHashtagErrorMessage);
@@ -155,14 +167,14 @@ const showSuccessMessage = () => {
     document.removeEventListener('click', onOutsideClick);
   };
 
-  function onEscKeyDown (evt) {
+  function onEscKeyDown(evt) {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       removeMessage();
     }
   }
 
-  function onOutsideClick (evt) {
+  function onOutsideClick(evt) {
     if (!evt.target.closest('.success__inner')) {
       removeMessage();
     }
@@ -187,14 +199,14 @@ const showErrorMessage = () => {
     document.removeEventListener('click', onOutsideClick);
   };
 
-  function onEscKeyDown (evt) {
+  function onEscKeyDown(evt) {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       removeMessage();
     }
   }
 
-  function onOutsideClick (evt) {
+  function onOutsideClick(evt) {
     if (!evt.target.closest('.error__inner')) {
       removeMessage();
     }
@@ -205,9 +217,8 @@ const showErrorMessage = () => {
   document.addEventListener('click', onOutsideClick);
 };
 
-
 const setFormSubmit = (onSuccess) => {
-  form.addEventListener('submit', async (evt) => { // async & await добавила после лайва
+  form.addEventListener('submit', async (evt) => {
     evt.preventDefault();
     const isValid = pristine.validate();
     if (isValid) {
@@ -224,7 +235,7 @@ const setFormSubmit = (onSuccess) => {
     }
   });
 };
-// Реализуйте логику проверки так, чтобы, как минимум, она срабатывала при попытке отправить форму и не давала этого сделать, если форма заполнена не по правилам.
+
 function updatePublishButton() {
   const isValid = pristine.validate();
   if (isValid) {
@@ -234,7 +245,14 @@ function updatePublishButton() {
   }
 }
 
-hashtagField.addEventListener('input', updatePublishButton);
-commentField.addEventListener('input', updatePublishButton);
+hashtagField.addEventListener('input', () => {
+  clearErrors();
+  updatePublishButton();
+});
+
+commentField.addEventListener('input', () => {
+  clearErrors();
+  updatePublishButton();
+});
 
 export { setFormSubmit, openUploadInput, closeUploadInput };

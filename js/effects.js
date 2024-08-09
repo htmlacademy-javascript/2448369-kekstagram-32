@@ -1,11 +1,3 @@
-// //описываю эффекты
-// //нахожу все нужные элементы
-// //устанавливаю какой по умолчанию будет эффект
-// //инициализирую слайдер библиотеки
-// //создаю слайдер с такими параметрами от эффектов
-// //прописываю функцию которая применяет стилм к выбранному фильтру
-// //прописываю, что если выбран none, то слайдер скрывается
-
 const EFFECTS = {
   none: { style: 'none', step: 0.1, unit: '', min: 0, max: 1 },
   chrome: { style: 'grayscale', step: 0.1, unit: '', min: 0, max: 1 },
@@ -24,7 +16,6 @@ const sliderElement = uploadForm.querySelector('.effect-level__slider');
 
 let chosenEffect = EFFECTS.none;
 
-// Инициализируем слайдер
 const createSlider = ({ min, max, step }) => {
   noUiSlider.create(sliderElement, {
     start: max,
@@ -39,10 +30,9 @@ const createSlider = ({ min, max, step }) => {
     }
   });
   sliderElement.noUiSlider.on('update', onSliderUpdate);
-  hideSlider(); // Скрыть слайдер по умолчанию
+  hideSlider();
 };
 
-// применение стиля к выбранному фильтру
 const applyEffect = (effect, value) => {
   if (effect === 'none') {
     imgElement.style.filter = '';
@@ -51,14 +41,12 @@ const applyEffect = (effect, value) => {
   }
 };
 
-// Обновление слайдера
 function onSliderUpdate () {
   const value = sliderElement.noUiSlider.get();
   effectLevelInput.value = value;
   applyEffect(chosenEffect, value);
 }
 
-// Обработчик изменения эффекта
 const onEffectsChange = (evt) => {
   const itemEffect = evt.target.closest('input[type="radio"]');
 
@@ -91,13 +79,11 @@ function showSlider () {
   sliderContainer.classList.remove('hidden');
 }
 
-// Устанавливаем эффект по умолчанию
 const setEffect = () => {
   createSlider(EFFECTS.none);
   effectsElement.addEventListener('change', onEffectsChange);
 };
 
-// Сбрасываем слайдер
 const resetSlider = () => {
   sliderElement.noUiSlider.destroy();
   imgElement.style.filter = '';

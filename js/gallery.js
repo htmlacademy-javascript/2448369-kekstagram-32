@@ -18,12 +18,12 @@ const renderGallery = (pictures) => {
 
     evt.preventDefault();
     const picture = pictures.find(
-      (item) => item.id === +thumbnail.dataset.thumbnailId); // находим id картинки и передаем в функции отрисовки большого img
+      (item) => item.id === +thumbnail.dataset.thumbnailId);
     showBigPicture(picture);
   });
 
   renderThumbnails(pictures, container);
-  imgFilters.classList.remove('img-filters--inactive'); // открываем блок фильтров
+  imgFilters.classList.remove('img-filters--inactive');
 };
 
 export { renderGallery, removeThumbnails };
