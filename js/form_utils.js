@@ -24,7 +24,13 @@ uploadImg.addEventListener('change', () => {
   const fileName = file.name.toLowerCase();
   const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
   if (matches) {
-    preview.src = URL.createObjectURL(file);
+    const imageUrl = URL.createObjectURL(file);
+    preview.src = imageUrl;
+
+    const effectPreviews = document.querySelectorAll('.effects__preview');
+    effectPreviews.forEach((effectPreview) => {
+      effectPreview.style.backgroundImage = `url(${imageUrl})`;
+    });
   }
 });
 
@@ -53,6 +59,15 @@ function onDocumentKeydown(evt) {
       evt.stopPropagation();
       return;
     }
+
+    const errorElement = document.querySelector('.error');
+    if (errorElement) {
+      evt.preventDefault();
+      errorElement.remove();
+      evt.stopPropagation();
+      return;
+    }
+
     evt.preventDefault();
     closeUploadInput();
   }
@@ -62,6 +77,12 @@ function resetForm() {
   uploadImg.value = '';
   form.reset();
   preview.src = '';
+
+  const effectPreviews = document.querySelectorAll('.effects__preview');
+  effectPreviews.forEach((effectPreview) => {
+    effectPreview.style.backgroundImage = '';
+  });
+
   updatePublishButton();
   clearErrors();
 }
@@ -216,6 +237,7 @@ const showErrorMessage = () => {
   document.addEventListener('keydown', onEscKeyDown);
   document.addEventListener('click', onOutsideClick);
 };
+
 
 const setFormSubmit = (onSuccess) => {
   form.addEventListener('submit', async (evt) => {

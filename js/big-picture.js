@@ -2,6 +2,8 @@ const bigPictureElement = document.querySelector('.big-picture');
 const commentCountElement = bigPictureElement.querySelector('.social__comment-count');
 const commentListElement = bigPictureElement.querySelector('.social__comments');
 const commentsLoaderElement = bigPictureElement.querySelector('.comments-loader');
+const shownCountElement = commentCountElement.querySelector('.social__comment-shown-count');
+const totalCountElement = commentCountElement.querySelector('.social__comment-total-count');
 const cancelButtonElement = bigPictureElement.querySelector('.big-picture__cancel');
 const bodyElement = document.querySelector('body');
 const commentTemplateElement = document.querySelector('#comment').content.querySelector('.social__comment');
@@ -63,7 +65,7 @@ const showBigPicture = (data) => {
   renderComments(data.comments);
 };
 
-function loadMoreComments () {
+function loadMoreComments() {
   const fragment = document.createDocumentFragment();
   const commentsToShow = currentComments.slice(commentsShown, commentsShown + COMMENTS_PER_PAGE);
   commentsToShow.forEach((item) => {
@@ -82,8 +84,9 @@ function loadMoreComments () {
   }
 }
 
-function updateCommentCount () {
-  commentCountElement.textContent = `${commentsShown} из ${currentComments.length} комментариев`;
+function updateCommentCount() {
+  shownCountElement.textContent = commentsShown;
+  totalCountElement.textContent = currentComments.length;
 }
 
 cancelButtonElement.addEventListener('click', onCancelButtonClick);

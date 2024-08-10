@@ -17,19 +17,21 @@ const sliderElement = uploadForm.querySelector('.effect-level__slider');
 let chosenEffect = EFFECTS.none;
 
 const createSlider = ({ min, max, step }) => {
-  noUiSlider.create(sliderElement, {
-    start: max,
-    range: {
-      min: min,
-      max: max
-    },
-    step: step,
-    format: {
-      to: (value) => Number(value),
-      from: (value) => Number(value),
-    }
-  });
-  sliderElement.noUiSlider.on('update', onSliderUpdate);
+  if (!sliderElement.noUiSlider) {
+    noUiSlider.create(sliderElement, {
+      start: max,
+      range: {
+        min: min,
+        max: max
+      },
+      step: step,
+      format: {
+        to: (value) => Number(value),
+        from: (value) => Number(value),
+      }
+    });
+    sliderElement.noUiSlider.on('update', onSliderUpdate);
+  }
   hideSlider();
 };
 
@@ -79,13 +81,16 @@ function showSlider () {
   sliderContainer.classList.remove('hidden');
 }
 
+
 const setEffect = () => {
   createSlider(EFFECTS.none);
   effectsElement.addEventListener('change', onEffectsChange);
 };
 
 const resetSlider = () => {
-  sliderElement.noUiSlider.destroy();
+  if (sliderElement.noUiSlider) {
+    sliderElement.noUiSlider.destroy();
+  }
   imgElement.style.filter = '';
   chosenEffect = EFFECTS.none;
   effectsElement.removeEventListener('change', onEffectsChange);
