@@ -17,8 +17,8 @@ const load = (route, method = Method.GET, body = null) =>
       return response.json();
     });
 
-const getData = () => load(Route.GET_DATA); //нужен ли промис
+const getData = () => load(Route.GET_DATA);
 
-const sendData = (body) => load(Route.SEND_DATA, Method.POST, body); //нужен ли промис
+const sendData = (body) => load(Route.SEND_DATA, Method.POST, body);
 
 export { getData, sendData };
