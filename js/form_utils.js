@@ -53,8 +53,17 @@ function onDocumentKeydown(evt) {
       evt.stopPropagation();
       return;
     }
+
+    const errorElement = document.querySelector('.error');
+    if (errorElement) {
+      evt.preventDefault();
+      errorElement.remove(); // Убираем сообщение об ошибке
+      evt.stopPropagation(); // Останавливаем дальнейшее распространение события
+      return;
+    }
+
     evt.preventDefault();
-    closeUploadInput();
+    closeUploadInput(); // Закрываем форму только если нет сообщения об ошибке
   }
 }
 
@@ -216,6 +225,7 @@ const showErrorMessage = () => {
   document.addEventListener('keydown', onEscKeyDown);
   document.addEventListener('click', onOutsideClick);
 };
+
 
 const setFormSubmit = (onSuccess) => {
   form.addEventListener('submit', async (evt) => {

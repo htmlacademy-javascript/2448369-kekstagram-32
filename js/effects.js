@@ -17,20 +17,22 @@ const sliderElement = uploadForm.querySelector('.effect-level__slider');
 let chosenEffect = EFFECTS.none;
 
 const createSlider = ({ min, max, step }) => {
-  noUiSlider.create(sliderElement, {
-    start: max,
-    range: {
-      min: min,
-      max: max
-    },
-    step: step,
-    format: {
-      to: (value) => Number(value),
-      from: (value) => Number(value),
-    }
-  });
-  sliderElement.noUiSlider.on('update', onSliderUpdate);
-  hideSlider();
+  if (!sliderElement.noUiSlider) { // Проверка, существует ли слайдер
+    noUiSlider.create(sliderElement, {
+      start: max,
+      range: {
+        min: min,
+        max: max
+      },
+      step: step,
+      format: {
+        to: (value) => Number(value),
+        from: (value) => Number(value),
+      }
+    });
+    sliderElement.noUiSlider.on('update', onSliderUpdate);
+  }
+  hideSlider(); // Скрываем слайдер после его создания или при повторной настройке
 };
 
 const applyEffect = (effect, value) => {
@@ -79,13 +81,16 @@ function showSlider () {
   sliderContainer.classList.remove('hidden');
 }
 
+
 const setEffect = () => {
-  createSlider(EFFECTS.none);
+  createSlider(EFFECTS.none); // Создаем слайдер только один раз
   effectsElement.addEventListener('change', onEffectsChange);
 };
 
 const resetSlider = () => {
-  sliderElement.noUiSlider.destroy();
+  if (sliderElement.noUiSlider) { // Проверка на существование слайдера перед его уничтожением
+    sliderElement.noUiSlider.destroy();
+  }
   imgElement.style.filter = '';
   chosenEffect = EFFECTS.none;
   effectsElement.removeEventListener('change', onEffectsChange);
