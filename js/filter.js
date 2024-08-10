@@ -5,7 +5,6 @@ import { debounce } from './util';
 const RANDOM_PHOTOS_COUNT = 10;
 let currentPictures = [];
 
-// Заранее сохраним необходимые DOM-элементы в константы
 const imgFiltersForm = document.querySelector('.img-filters__form');
 const picturesContainer = document.querySelector('.pictures');
 let activeButton = document.querySelector('.img-filters__button--active');
@@ -38,7 +37,6 @@ const filterFunctions = {
   'filter-discussed': filterDiscussed
 };
 
-// Функция, обрабатывающая фильтрацию
 function applyFilter(filterId) {
   removeThumbnails();
 
@@ -48,17 +46,14 @@ function applyFilter(filterId) {
   }
 }
 
-// Обернем applyFilter в debounce и сохраним в переменной
 const debouncedApplyFilter = debounce(applyFilter, 500);
 
 function onFilterChange(evt) {
   if (evt.target.classList.contains('img-filters__button')) {
-    // Немедленная установка активного класса на кнопку
     activeButton.classList.remove('img-filters__button--active');
     evt.target.classList.add('img-filters__button--active');
     activeButton = evt.target;
 
-    // Отложенная обработка фильтрации
     debouncedApplyFilter(evt.target.id);
   }
 }

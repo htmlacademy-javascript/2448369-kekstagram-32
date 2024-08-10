@@ -27,7 +27,6 @@ uploadImg.addEventListener('change', () => {
     const imageUrl = URL.createObjectURL(file);
     preview.src = imageUrl;
 
-    // Обновляем превью для всех эффектов
     const effectPreviews = document.querySelectorAll('.effects__preview');
     effectPreviews.forEach((effectPreview) => {
       effectPreview.style.backgroundImage = `url(${imageUrl})`;
@@ -64,13 +63,13 @@ function onDocumentKeydown(evt) {
     const errorElement = document.querySelector('.error');
     if (errorElement) {
       evt.preventDefault();
-      errorElement.remove(); // Убираем сообщение об ошибке
-      evt.stopPropagation(); // Останавливаем дальнейшее распространение события
+      errorElement.remove();
+      evt.stopPropagation();
       return;
     }
 
     evt.preventDefault();
-    closeUploadInput(); // Закрываем форму только если нет сообщения об ошибке
+    closeUploadInput();
   }
 }
 
@@ -79,10 +78,9 @@ function resetForm() {
   form.reset();
   preview.src = '';
 
-  // Сбрасываем превью эффектов
   const effectPreviews = document.querySelectorAll('.effects__preview');
   effectPreviews.forEach((effectPreview) => {
-    effectPreview.style.backgroundImage = ''; // или можно вернуть значение по умолчанию, если оно есть
+    effectPreview.style.backgroundImage = '';
   });
 
   updatePublishButton();

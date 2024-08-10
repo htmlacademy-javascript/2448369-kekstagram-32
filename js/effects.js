@@ -17,7 +17,7 @@ const sliderElement = uploadForm.querySelector('.effect-level__slider');
 let chosenEffect = EFFECTS.none;
 
 const createSlider = ({ min, max, step }) => {
-  if (!sliderElement.noUiSlider) { // Проверка, существует ли слайдер
+  if (!sliderElement.noUiSlider) {
     noUiSlider.create(sliderElement, {
       start: max,
       range: {
@@ -32,7 +32,7 @@ const createSlider = ({ min, max, step }) => {
     });
     sliderElement.noUiSlider.on('update', onSliderUpdate);
   }
-  hideSlider(); // Скрываем слайдер после его создания или при повторной настройке
+  hideSlider();
 };
 
 const applyEffect = (effect, value) => {
@@ -83,12 +83,12 @@ function showSlider () {
 
 
 const setEffect = () => {
-  createSlider(EFFECTS.none); // Создаем слайдер только один раз
+  createSlider(EFFECTS.none);
   effectsElement.addEventListener('change', onEffectsChange);
 };
 
 const resetSlider = () => {
-  if (sliderElement.noUiSlider) { // Проверка на существование слайдера перед его уничтожением
+  if (sliderElement.noUiSlider) {
     sliderElement.noUiSlider.destroy();
   }
   imgElement.style.filter = '';
