@@ -24,7 +24,14 @@ uploadImg.addEventListener('change', () => {
   const fileName = file.name.toLowerCase();
   const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
   if (matches) {
-    preview.src = URL.createObjectURL(file);
+    const imageUrl = URL.createObjectURL(file);
+    preview.src = imageUrl;
+
+    // Обновляем превью для всех эффектов
+    const effectPreviews = document.querySelectorAll('.effects__preview');
+    effectPreviews.forEach((effectPreview) => {
+      effectPreview.style.backgroundImage = `url(${imageUrl})`;
+    });
   }
 });
 
@@ -71,6 +78,13 @@ function resetForm() {
   uploadImg.value = '';
   form.reset();
   preview.src = '';
+
+  // Сбрасываем превью эффектов
+  const effectPreviews = document.querySelectorAll('.effects__preview');
+  effectPreviews.forEach((effectPreview) => {
+    effectPreview.style.backgroundImage = ''; // или можно вернуть значение по умолчанию, если оно есть
+  });
+
   updatePublishButton();
   clearErrors();
 }
