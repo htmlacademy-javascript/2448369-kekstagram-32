@@ -38,7 +38,6 @@ function openUploadInput() {
   uploadOverlay.classList.remove('hidden');
   bodyElement.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
-  updatePublishButton();
   setEffect();
 }
 
@@ -83,12 +82,10 @@ function resetForm() {
     effectPreview.style.backgroundImage = '';
   });
 
-  updatePublishButton();
   clearErrors();
 }
 
 uploadImgCancel.addEventListener('click', closeUploadInput);
-
 
 const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
@@ -238,7 +235,6 @@ const showErrorMessage = () => {
   document.addEventListener('click', onOutsideClick);
 };
 
-
 const setFormSubmit = (onSuccess) => {
   form.addEventListener('submit', async (evt) => {
     evt.preventDefault();
@@ -258,7 +254,7 @@ const setFormSubmit = (onSuccess) => {
   });
 };
 
-function updatePublishButton() {
+function togglePublishButtonState() {
   const isValid = pristine.validate();
   if (isValid) {
     publishButton.removeAttribute('disabled');
@@ -269,12 +265,12 @@ function updatePublishButton() {
 
 hashtagField.addEventListener('input', () => {
   clearErrors();
-  updatePublishButton();
+  togglePublishButtonState();
 });
 
 commentField.addEventListener('input', () => {
   clearErrors();
-  updatePublishButton();
+  togglePublishButtonState();
 });
 
 export { setFormSubmit, openUploadInput, closeUploadInput };
